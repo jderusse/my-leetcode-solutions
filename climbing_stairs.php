@@ -3,7 +3,7 @@
 class Solution {
     public function climbStairs(int $n): int 
     {
-        // Numbers of distinct ways kered by number of stairs
+        // Numbers of distinct ways keyed by number of stairs
         $ways = [];
         
         $ways[0] = 1;
