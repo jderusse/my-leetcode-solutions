@@ -2,17 +2,17 @@
 class Stack
 {
     private $elements = [];
-    
+
     public function push(string $char)
     {
         array_push($this->elements, $char);
     }
-    
+
     public function pop()
     {
         return array_pop($this->elements);
     }
-    
+
     public function isEmpty(): bool
     {
         return empty($this->elements);
@@ -20,34 +20,36 @@ class Stack
 }
 
 class Solution {
-    const OPEN = ['(', '[', '{'];
-    
-    public function isValid($s) 
+    const MATCHES = [
+        '(' => ')',
+        '[' => ']',
+        '{' => '}'
+    ];
+
+    public function isValid($s)
     {
         if (empty($s)) return true;
-        if (strlen($s) < 2) return false;
-        
+        $s = preg_replace(sprintf('/[^%s]+/', preg_quote(implode('', array_keys(self::MATCHES)).implode('', array_values(self::MATCHES)))), '', $s);
+
+        if (empty($s)) return true;
+        if (strlen($s) % 2 !== 0) return false;
+
         $tracker = new Stack();
-        
-        $braces = str_split($s);
-        foreach ($braces as $brace) {
-            if (in_array($brace, self::OPEN)) {
-                $tracker->push($brace);
-                
+        $last = null;
+        foreach (str_split($s) as $c) {
+            if (isset(self::MATCHES[$c])) {
+                if ($last) {
+                    $tracker->push($last);
+                }
+                $last = self::MATCHES[$c];
+
                 continue;
             }
-            
+
+            if ($last !== $c) return false;
             $last = $tracker->pop();
-            
-            if (
-                ($last !== '(' && $brace === ')') ||
-                ($last !== '[' && $brace === ']') ||
-                ($last !== '{' && $brace === '}')
-            ) {
-                return false;
-            }
         }
-        
+
         return $tracker->isEmpty();
     }
 }
